@@ -1,1 +1,11 @@
 pyuic5 -x FTPClient.ui -o FTPClient.py
+bài 2
+
+toPlainText() để lấy giữ liệu từ edit text
+text() lấy giá trị từ 1 label
+setText("abc") gáng giá trị giữ liệu
+Bài 3
+
+label tìm tới thuộc tính pixmap để thêm hình ảnh vào
+Phút thứ 15
+Stacked Widget giống như 1 slide cho phép chứa các thành phần như label, textEdit, ...

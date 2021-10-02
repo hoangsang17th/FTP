@@ -1,14 +1,14 @@
 import sys
 from PyQt5.QtWidgets import QApplication,QMainWindow
 from FTPClient import Ui_MainWindow
-
+import ftplib
 class MainWindow:
     def __init__(self):
         self.main_win = QMainWindow()
         self.uic = Ui_MainWindow()
         self.uic.setupUi(self.main_win)
-        self.uic.btnOk.clicked.connect(self.loader)
-        self.uic.btnCancel.clicked.connect(self.main_win.close)
+        # self.uic.btnOk.clicked.connect(self.loader)
+        # self.uic.btnCancel.clicked.connect(self.main_win.close)
 
     def loader(self):
         self.uic.textEdit.setText("I'm not Iron man")
