@@ -1,6 +1,6 @@
 pyuic5 -x FTPClient.ui -o FTPClient.py
 bài 2
-
+pyuic5 -x FTPClientSettings.ui -o FTPClientSettings.py
 toPlainText() để lấy giữ liệu từ edit text
 text() lấy giá trị từ 1 label
 setText("abc") gáng giá trị giữ liệu

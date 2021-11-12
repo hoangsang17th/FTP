@@ -6,19 +6,38 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1121</width>
-    <height>811</height>
+    <width>1251</width>
+    <height>851</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>999999</width>
+    <height>851</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>FTP Client by Hoangsang17th</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>logo.png</normaloff>logo.png</iconset>
+  </property>
   <widget class="QWidget" name="widgetAll">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>1121</width>
+     <height>825</height>
+    </size>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
    </property>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
@@ -76,6 +95,9 @@
          <width>16777215</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The server you need to connect to?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -213,7 +235,7 @@
       <x>0</x>
       <y>40</y>
       <width>1121</width>
-      <height>171</height>
+      <height>211</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="layoutStatus">
@@ -248,14 +270,14 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>280</y>
+      <y>320</y>
       <width>1121</width>
       <height>501</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
      <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
+      <enum>QLayout::SetMaximumSize</enum>
      </property>
      <property name="leftMargin">
       <number>5</number>
@@ -270,13 +292,79 @@
       <number>10</number>
      </property>
      <item row="2" column="0">
-      <widget class="QTreeView" name="folderLocal"/>
+      <widget class="QTreeView" name="folderLocal">
+       <property name="mouseTracking">
+        <bool>true</bool>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::MoveAction</enum>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QTreeView" name="folderServer">
-       <property name="contextMenuPolicy">
-        <enum>Qt::NoContextMenu</enum>
+      <widget class="QTreeWidget" name="folderServer">
+       <property name="minimumSize">
+        <size>
+         <width>550</width>
+         <height>0</height>
+        </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>550</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Size</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Type</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Date Modified</string>
+        </property>
+       </column>
       </widget>
      </item>
     </layout>
@@ -285,12 +373,18 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>210</y>
+      <y>250</y>
       <width>1121</width>
       <height>31</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="layoutNameSite">
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QLabel" name="lbFolderLocal">
        <property name="font">
@@ -326,7 +420,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>240</y>
+      <y>280</y>
       <width>561</width>
       <height>41</height>
      </rect>
@@ -360,13 +454,60 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>280</y>
+      <width>561</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="layoutPathServer">
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="inputDirPathServer">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Not connected to any server</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1121</width>
+     <width>1251</width>
      <height>26</height>
     </rect>
    </property>
@@ -397,6 +538,12 @@
    <property name="text">
     <string>About</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionExit">
    <property name="text">
@@ -408,12 +555,24 @@
     <string>Settings</string>
    </property>
   </action>
-  <action name="actionDisconnect">
-   <property name="text">
-    <string>Disconnect</string>
-   </property>
-  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>folderServer</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>loadDirPathLocal</receiver>
+   <slot>showMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>840</x>
+     <y>600</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
