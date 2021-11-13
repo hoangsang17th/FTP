@@ -2,13 +2,28 @@
 <ui version="4.0">
  <class>settingsWindow</class>
  <widget class="QMainWindow" name="settingsWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>391</height>
+    <height>270</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>640</width>
+    <height>270</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>640</width>
+    <height>270</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Settings -FTPClient</string>
@@ -20,7 +35,7 @@
       <x>0</x>
       <y>0</y>
       <width>641</width>
-      <height>351</height>
+      <height>231</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="layoutTab">
@@ -38,6 +53,13 @@
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -63,7 +85,7 @@
            <x>10</x>
            <y>10</y>
            <width>601</width>
-           <height>381</height>
+           <height>172</height>
           </rect>
          </property>
          <layout class="QFormLayout" name="formLayout">
@@ -71,7 +93,7 @@
            <number>10</number>
           </property>
           <property name="topMargin">
-           <number>10</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
            <number>10</number>
@@ -206,7 +228,9 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
               <strikeout>false</strikeout>
              </font>
             </property>
@@ -228,16 +252,173 @@
         <attribute name="title">
          <string>Transfers</string>
         </attribute>
-       </widget>
-       <widget class="QWidget" name="tabInterface">
-        <attribute name="title">
-         <string>Interface</string>
-        </attribute>
-       </widget>
-       <widget class="QWidget" name="tabDebug">
-        <attribute name="title">
-         <string>Debug</string>
-        </attribute>
+        <widget class="QWidget" name="verticalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>9</y>
+           <width>601</width>
+           <height>111</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="lbViewTransfers">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+              <strikeout>false</strikeout>
+             </font>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Default file exists action</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTabWidget" name="tabUpDown">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <widget class="QWidget" name="tabUploads">
+             <attribute name="title">
+              <string>Uploads</string>
+             </attribute>
+             <widget class="QWidget" name="horizontalLayoutWidget_3">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>581</width>
+                <height>41</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="spacing">
+                <number>40</number>
+               </property>
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="radioAskU">
+                 <property name="text">
+                  <string>Ask for action</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioSkipU">
+                 <property name="text">
+                  <string>Skip</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioOverwriteU">
+                 <property name="text">
+                  <string>Overwrite</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="tabDownloads">
+             <attribute name="title">
+              <string>Downloads</string>
+             </attribute>
+             <widget class="QWidget" name="horizontalLayoutWidget_4">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>581</width>
+                <height>41</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>40</number>
+               </property>
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="radioAskD">
+                 <property name="text">
+                  <string>Ask for action</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioSkipD">
+                 <property name="text">
+                  <string>Skip</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioOverwriteD">
+                 <property name="text">
+                  <string>Overwrite</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -247,7 +428,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>350</y>
+      <y>230</y>
       <width>641</width>
       <height>38</height>
      </rect>
@@ -282,6 +463,13 @@
       <widget class="QPushButton" name="btnSave">
        <property name="text">
         <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancel">
+       <property name="text">
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
