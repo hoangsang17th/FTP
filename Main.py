@@ -1,15 +1,26 @@
-import sys
+from ftplib import FTP, FTP_TLS
+from io import StringIO
+import io
+
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QApplication,QMainWindow, QFileSystemModel, QTreeWidgetItem, QWidget, QMenu
 from PyQt5 import QtCore
-from FTPClient import Ui_MainWindow
-from ftplib import FTP, FTP_TLS
+
+import sys
 import os
 import webbrowser
-from MySQLConnection import updateAccount, selectAccount
-from Dialogs.FTPClientSettings import Ui_settingsWindow
+from threading import Thread
 from datetime import datetime
+
+from FTPClient import Ui_MainWindow
+from Dialogs.FTPClientSettings import Ui_settingsWindow
+from Dialogs.CreateDirectory import Ui_createFolderWindow
+from Dialogs.CreateFile import Ui_NewFileWindow
+from Dialogs.Rename import Ui_RenameFileWindow
+
+from MySQLConnection import updateAccount, selectAccount
+
 app_icon_path = os.path.join(os.path.dirname(__file__), 'Images')
 qIcon = lambda name: QIcon(os.path.join(app_icon_path, name))
 class MainWindow():
@@ -33,6 +44,7 @@ class MainWindow():
         self.uic.actionExit.triggered.connect(self.main_win.close)
         self.uic.actionSettings.triggered.connect(self.openSettings)
         self.uic.folderServer.setAlternatingRowColors(True)
+        self.uic.folderServer.itemDoubleClicked.connect(self.cdToRemoteDirectory)
         self.pathServer = "Not connected to any server"
         dataMySQL = selectAccount()
         self.uic.inputHost.setText(dataMySQL[1])
@@ -41,6 +53,7 @@ class MainWindow():
         self.uic.inputPort.setText(dataMySQL[4])
         self.ftp = FTP()
         self.uic.folderLocal.customContextMenuRequested.connect(self.contextMenuLocal)
+        
         # print(self.convert_bytes(1380408))
         # force UTF-8 encoding
         self.ftp.encoding = "utf-8"
@@ -86,28 +99,6 @@ class MainWindow():
                         self.printStatus("Logged on")
                         self.uic.btnConnect.setText("Disconnect")
                         self.enabledComponents()
-                        # mkdir folder 
-                        # l1 = QTreeWidgetItem(["String A", "String B", "String C", "String D"])
-                        # self.uic.folderServer.addTopLevelItem(l1)
-                        # self.ftp.cwd("/OS")
-                        # dir_list = []
-                        # self.ftp.dir(dir_list.append)
-                        # print(self.ftp.mlsd("/", ["Name", "Size", "Type", "Date Modified"]))
-                        # print(len(dir_list))
-                        # for name, facts in self.ftp.mlsd("/OS", facts=["Size", "Type", "Date Modified"]):
-    
-                        #     print(name);
-
-                        #     print("////");
-
-                        #     print(facts);
-                        # try:
-
-                        #     self.ftp.sendcmd('LIST')
-                        # except ValueError:
-                        #     print(ValueError)
-                        # print(ftp.nlst())
-                        # print(self.ftp.dir())
                     except:
                         self.printError("Incorret Host/User/Pass or Port!")
         except:
@@ -115,6 +106,23 @@ class MainWindow():
         # self.printStatus("User authentication successful.")
 
     #############################################################
+    # Làm cái double click thì vào bên trong folder bên trong cho giống cái TreeView
+    def cdToRemoteDirectory(self, item):
+        if str(item.text(2)) != "Folder":
+            content = "Can't open file " + str(item.text(0))
+            self.printError(content)
+        else:
+
+            self.pathServer = self.pathServer+ "/" + str(item.text(0))
+            self.pathServer = self.pathServer.replace("//", "/")
+
+            # print(self.pathServer)
+            self.uic.inputDirPathServer.setText(self.pathServer)
+            self.loadDirPathServer()
+            content = "Access '"+self.pathServer +"' successful"
+            self.printStatus(content)
+        
+
     def downloadToRemoteFileList(self):
         """
         download file and directory list from FTP Server
@@ -182,22 +190,14 @@ class MainWindow():
 
     # Hàm hiển thị menu các chức năng để tương tác với folder client
     def contextMenuLocal(self, point):
-        item = self.uic.folderLocal.selectedIndexes()
         menu = QMenu(self.uic.folderLocal)
         upload = menu.addAction("Upload")
         upload.setEnabled(False)
-        open = menu.addAction("Open")
+        open = menu.addAction("Open this folder in File Explorer")
         menu.addSeparator()
-        mkdir = menu.addAction("Create directory")
-        newfile = menu.addAction("Create new file")
         refresh = menu.addAction("Refresh")
-        menu.addSeparator()
-        remove = menu.addAction("Delete")
-        rename = menu.addAction("Rename")
-        
         action = menu.exec_(self.uic.folderLocal.mapToGlobal(point))
-        if action == refresh:
-            self.testPrint()
+        
         if action == open:
             # self.uic.folderLocal.itemClicked.setText()
             try:
@@ -205,16 +205,19 @@ class MainWindow():
             except:
                 error = "The system cannot find the drive specified: '"+ self.pathLocal+ "'"
                 self.printError(error)
+        if action == refresh:
+            self.loadDirPathLocal()
+            
+            # self.pro
     # Hàm hiển thị menu các chức năng để tương tác với folder server
     def contextMenuServer(self, point):
         item = self.uic.folderServer.currentItem()
         menu = QMenu(self.uic.folderServer)
-        download = menu.addAction("Download")
-        download.setEnabled(False)
-        edit = menu.addAction("View/ Edit")
+        self.download = menu.addAction("Download")
+        
         menu.addSeparator()
         mkdir = menu.addAction("Create directory")
-        newfile = menu.addAction("Create new file")
+        newfile = menu.addAction("Create new file .txt")
         refresh = menu.addAction("Refresh")
         menu.addSeparator()
         remove = menu.addAction("Delete")
@@ -222,9 +225,87 @@ class MainWindow():
         
         action = menu.exec_(self.uic.folderServer.mapToGlobal(point))
         if action == refresh:
-            self.testPrint()
+            self.updateDirServer()
+            self.printStatus("Refresh successful")
+        if action == self.download:
+            self.downloadFolder()
+        if action == mkdir:
+            self.makeFolderServer()
+        if action == newfile:
+            self.makeFileServer()
+        if action == remove:
+            self.removeFileServer()
+        if action == rename:
+            self.renameFileServer()
 
+    def renameFileServer(self):
+        self.renameFile = QMainWindow()
+        self.uiRenameFile = Ui_RenameFileWindow()
+        self.uiRenameFile.setupUi(self.renameFile)
+        self.renameFile.show()
+        self.uiRenameFile.btnNext.clicked.connect(self.fRenameFileServer)
+        self.uiRenameFile.btnCancel.clicked.connect(self.renameFile.close)
+    def fRenameFileServer(self):
+        item = self.uic.folderServer.currentItem()
+        if self.uiRenameFile.inputRenameFile.text() == "":
+            return self.printError("Name not null!")
+        try:
+            old_path = self.pathServer+ "/" +str(item.text(0))
+            old_path = old_path.replace("//", "/")
+            new_path = self.pathServer+ "/" +self.uiRenameFile.inputRenameFile.text()
+            new_path = new_path.replace("//", "/")
+            self.ftp.rename(old_path, new_path)
+            self.updateDirServer()
+        except:
+            self.printError("Can't rename thí file!")
     
+    def removeFileServer(self):
+        item = self.uic.folderServer.currentItem()
+        for i in range(self.uic.folderServer.topLevelItemCount()):
+                if(self.uic.folderServer.topLevelItem(i) == item):
+                    break
+        # Ngay đây cần sửa lại
+        dir = self.pathServer + "/" + str(item.text(0))
+        dir = dir.replace("//", "/")
+        try:
+            self.ftp.delete(dir)
+            self.updateDirServer()
+            self.uic.folderServer.setCurrentItem(self.uic.folderServer.topLevelItem(i))
+            self.printStatus("Delete file successfully!")
+        except:
+            try:
+                self.ftp.rmd(dir)
+                self.updateDirServer()
+                self.uic.folderServer.setCurrentItem(self.uic.folderServer.topLevelItem(i))
+                self.printStatus("Delete folder successfully!")
+            except:
+                self.printError("Sorry, you don't have this permission!")
+
+    def downloadFolder(self):
+        self.printError("Chauw thể sử dụng")
+        # dl = Thread(target=self._download)
+        # dl.start()
+
+    def _download(self):
+            item     = self.uic.folderServer.currentItem()
+            filesize = int(item.text(1))
+
+            try:
+                srcfile  = self.pathServer + "/"+ str(item.text(0).toUtf8())
+                srcfile  = srcfile.replace('//', '/')
+                dstfile  = self.pathLocal + "/"+ str(item.text(0).toUtf8())
+            
+            except AttributeError:
+                srcfile  = self.pathServer + "/"+ str(item.text(0))
+                srcfile  = srcfile.replace('//', '/')
+                dstfile  = self.pathLocal + "/"+ str(item.text(0))
+
+    def enabledContextDownload(self):
+        self.download.setEnabled(True)  
+
+    def updateDirServer(self):
+        self.uic.folderServer.clear()
+        self.downloadToRemoteFileList()
     # Tạo hàm để test các nút hoặc là sự kiện 1 cách nhanh chóng
     def testPrint(self):
         print("Test Ok")
@@ -233,15 +314,21 @@ class MainWindow():
         self.uic.inputDirPathServer.setReadOnly(True)
         self.uic.inputDirPathServer.setText("Not connected to any server")
         self.uic.loadDirPathServer.setEnabled(False)
+        self.uic.folderServer.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.download.setEnabled(False)
+
+
     def enabledComponents(self):
         self.pathServer = self.ftp.pwd()
         self.uic.inputDirPathServer.setText(self.pathServer)
         self.uic.inputDirPathServer.setReadOnly(False)
         self.uic.loadDirPathServer.setEnabled(True)
         # Khi đã kết nối thì cho phép click right
+        self.uic.folderServer.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.uic.folderServer.customContextMenuRequested.connect(self.contextMenuServer)
         
         self.downloadToRemoteFileList()
+        self.download.setEnabled(True)
     # Hàm load dir Path để hiển thị folder cho nười dùng
     def loadDirPathServer(self):
         dirPathServer = self.uic.inputDirPathServer.text()
@@ -249,6 +336,8 @@ class MainWindow():
             self.ftp.cwd(dirPathServer)
             self.uic.folderServer.clear()
             self.downloadToRemoteFileList()
+            self.pathServer = dirPathServer
+            
             # print(self.ftp.dir())
         except:
             content = "Can't find path named " + dirPathServer
@@ -265,15 +354,67 @@ class MainWindow():
     # Xóa folder, file
     def deleteDataServer(self, dataName):
         self.ftp.delete(dataName)
-    # Tạo 1 folder trên server
-    def makeFolderServer(self, folderName):
-        self.ftp.mkd(folderName)
+    # Tạo 1 file trên server
     
-    def loadUpdateFolderServer(self):
-        self.printStatus("Server data update successful")
+    def makeFileServer(self):
+        self.createFile = QMainWindow()
+        self.uiCreateFile = Ui_NewFileWindow()
+        self.uiCreateFile.setupUi(self.createFile)
+        self.createFile.show()
+        self.uiCreateFile.btnNext.clicked.connect(self.fMakeFileServer)
+        self.uiCreateFile.btnCancel.clicked.connect(self.createFile.close)
+    
+    def fMakeFileServer(self):
+        try:
+            content = "Create a file named "+ self.uiCreateFile.inputCreateFile.text() + " with path " + self.pathServer
+            self.printProcess(content)
+            self.ftp.set_pasv(0)
+            dir = self.pathServer+"/"+self.uiCreateFile.inputCreateFile.text()
+            dir = dir.replace("//", "/")
+
+            tmp_file = os.path.join(self.pathLocal, '##tmp##.txt')
+            open(tmp_file, mode='x')
+            m_time = os.stat(tmp_file).st_mtime
+            webbrowser.open(tmp_file)
+            while os.stat(tmp_file).st_mtime == m_time:
+                pass
+            
+            
+            file = open(tmp_file, 'rb')
+            self.ftp.storbinary(cmd='STOR '+dir, fp=file)
+            self.printStatus("Make file successfully!")
+            self.ftp.set_pasv(1)
+            self.updateDirServer()
+            
+            self.createFile.close()
+        except Exception:
+            self.printError("550 Can't create directory. Permission denied or Folder already exists")
+
+    # Tạo 1 folder trên server
+    def makeFolderServer(self):
+        self.createFolder = QMainWindow()
+        self.uiCreateFolder = Ui_createFolderWindow()
+        self.uiCreateFolder.setupUi(self.createFolder)
+        self.createFolder.show()
+        self.uiCreateFolder.btnOK.clicked.connect(self.fMakeFolderServer)
+        self.uiCreateFolder.btnCancel.clicked.connect(self.createFolder.close)
+        
+    def fMakeFolderServer(self):
+        try:
+            content = "Create a folder named "+ self.uiCreateFolder.inputCreateDirectory.text() + " with path " + self.pathServer
+            self.printProcess(content)
+            dir = self.pathServer+"/"+self.uiCreateFolder.inputCreateDirectory.text()
+            dir = dir.replace("//", "/")
+            self.ftp.mkd(dir)
+            self.printStatus("Make folder successfully!")
+            self.updateDirServer()
+            self.createFolder.close()
+        except Exception:
+            self.printError("550 Can't create directory. Permission denied or Folder already exists")
+        
     # Mở phần cài đặt ứng dụng
     def openSettings(self):
-        self.windowSetting = QtWidgets.QMainWindow()
+        self.windowSetting = QMainWindow()
         self.uiSetting = Ui_settingsWindow()
         self.uiSetting.setupUi(self.windowSetting)
         self.windowSetting.show()
@@ -307,7 +448,9 @@ class MainWindow():
     def loadDirPathLocal(self):
         self.pathLocal = self.uic.inputDirPathLocal.text()
         self.uic.model.setRootPath(r""+self.pathLocal)
-        self.uic.folderLocal.setRootIndex(self.uic.model.index(self.pathLocal))  
+        self.uic.folderLocal.setRootIndex(self.uic.model.index(self.pathLocal))
+        self.printStatus("Data refresh successful")
+        
     # Sử dụng để hiển thị trạng thái cho người dùng
     # Sử dụng để hiển thị lỗi với nội dung màu đỏ
     def printError(self, message):

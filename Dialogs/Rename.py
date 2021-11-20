@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'CreateFile.ui'
+# Form implementation generated from reading ui file 'Rename.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -11,13 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_NewFileWindow(object):
-    def setupUi(self, NewFileWindow):
-        NewFileWindow.setObjectName("NewFileWindow")
-        NewFileWindow.resize(400, 393)
-        NewFileWindow.setMinimumSize(QtCore.QSize(400, 130))
-        NewFileWindow.setMaximumSize(QtCore.QSize(4004, 4444))
-        self.centralwidget = QtWidgets.QWidget(NewFileWindow)
+class Ui_RenameFileWindow(object):
+    def setupUi(self, RenameFileWindow):
+        RenameFileWindow.setObjectName("RenameFileWindow")
+        RenameFileWindow.resize(400, 130)
+        self.centralwidget = QtWidgets.QWidget(RenameFileWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 401, 91))
@@ -42,11 +40,11 @@ class Ui_NewFileWindow(object):
         self.lbCreateFile.setWordWrap(True)
         self.lbCreateFile.setObjectName("lbCreateFile")
         self.verticalLayout.addWidget(self.lbCreateFile)
-        self.inputCreateFile = QtWidgets.QLineEdit(self.verticalLayoutWidget)
-        self.inputCreateFile.setMinimumSize(QtCore.QSize(0, 30))
-        self.inputCreateFile.setText("")
-        self.inputCreateFile.setObjectName("inputCreateFile")
-        self.verticalLayout.addWidget(self.inputCreateFile)
+        self.inputRenameFile = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        self.inputRenameFile.setMinimumSize(QtCore.QSize(0, 30))
+        self.inputRenameFile.setText("")
+        self.inputRenameFile.setObjectName("inputRenameFile")
+        self.verticalLayout.addWidget(self.inputRenameFile)
         self.line = QtWidgets.QFrame(self.verticalLayoutWidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -64,24 +62,24 @@ class Ui_NewFileWindow(object):
         self.btnCancel = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.btnCancel.setObjectName("btnCancel")
         self.horizontalLayout.addWidget(self.btnCancel)
-        NewFileWindow.setCentralWidget(self.centralwidget)
+        RenameFileWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(NewFileWindow)
-        QtCore.QMetaObject.connectSlotsByName(NewFileWindow)
+        self.retranslateUi(RenameFileWindow)
+        QtCore.QMetaObject.connectSlotsByName(RenameFileWindow)
 
-    def retranslateUi(self, NewFileWindow):
+    def retranslateUi(self, RenameFileWindow):
         _translate = QtCore.QCoreApplication.translate
-        NewFileWindow.setWindowTitle(_translate("NewFileWindow", "Create new file"))
-        self.lbCreateFile.setText(_translate("NewFileWindow", "Please enter the name of the file which should be created:"))
-        self.btnNext.setText(_translate("NewFileWindow", "Next"))
-        self.btnCancel.setText(_translate("NewFileWindow", "Cancel"))
+        RenameFileWindow.setWindowTitle(_translate("RenameFileWindow", "Rename File/Folder"))
+        self.lbCreateFile.setText(_translate("RenameFileWindow", "Please enter the name of the file which should be created:"))
+        self.btnNext.setText(_translate("RenameFileWindow", "Next"))
+        self.btnCancel.setText(_translate("RenameFileWindow", "Cancel"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    NewFileWindow = QtWidgets.QMainWindow()
-    ui = Ui_NewFileWindow()
-    ui.setupUi(NewFileWindow)
-    NewFileWindow.show()
+    RenameFileWindow = QtWidgets.QMainWindow()
+    ui = Ui_RenameFileWindow()
+    ui.setupUi(RenameFileWindow)
+    RenameFileWindow.show()
     sys.exit(app.exec_())

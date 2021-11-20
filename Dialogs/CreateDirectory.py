@@ -11,13 +11,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(400, 150)
-        MainWindow.setMinimumSize(QtCore.QSize(400, 150))
-        MainWindow.setMaximumSize(QtCore.QSize(400, 150))
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_createFolderWindow(object):
+    def setupUi(self, createFolderWindow):
+        createFolderWindow.setObjectName("createFolderWindow")
+        createFolderWindow.resize(400, 150)
+        createFolderWindow.setMinimumSize(QtCore.QSize(400, 150))
+        createFolderWindow.setMaximumSize(QtCore.QSize(400, 150))
+        self.centralwidget = QtWidgets.QWidget(createFolderWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 401, 111))
@@ -63,25 +63,25 @@ class Ui_MainWindow(object):
         self.btnCancel = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.btnCancel.setObjectName("btnCancel")
         self.horizontalLayout.addWidget(self.btnCancel)
-        MainWindow.setCentralWidget(self.centralwidget)
+        createFolderWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(createFolderWindow)
+        QtCore.QMetaObject.connectSlotsByName(createFolderWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, createFolderWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Create Directory"))
-        self.lbCreateDirectory.setText(_translate("MainWindow", "Please enter the name of the directory which should be created:"))
-        self.inputCreateDirectory.setText(_translate("MainWindow", "/"))
-        self.btnOK.setText(_translate("MainWindow", "OK"))
-        self.btnCancel.setText(_translate("MainWindow", "Cancel"))
+        createFolderWindow.setWindowTitle(_translate("createFolderWindow", "Create Directory"))
+        self.lbCreateDirectory.setText(_translate("createFolderWindow", "Please enter the name of the directory which should be created:"))
+        self.inputCreateDirectory.setText(_translate("createFolderWindow", "/"))
+        self.btnOK.setText(_translate("createFolderWindow", "OK"))
+        self.btnCancel.setText(_translate("createFolderWindow", "Cancel"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    createFolderWindow = QtWidgets.QMainWindow()
+    ui = Ui_createFolderWindow()
+    ui.setupUi(createFolderWindow)
+    createFolderWindow.show()
     sys.exit(app.exec_())
