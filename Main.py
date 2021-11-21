@@ -52,7 +52,7 @@ class MainWindow():
         self.uic.inputPass.setText(dataMySQL[3])
         self.uic.inputPort.setText(dataMySQL[4])
         self.ftp = FTP()
-        self.uic.folderLocal.customContextMenuRequested.connect(self.contextMenuLocal)
+        # self.uic.folderLocal.customContextMenuRequested.connect(self.contextMenuLocal)
         
         # print(self.convert_bytes(1380408))
         # force UTF-8 encoding
@@ -192,14 +192,14 @@ class MainWindow():
     def contextMenuLocal(self, point):
         menu = QMenu(self.uic.folderLocal)
         upload = menu.addAction("Upload")
-        upload.setEnabled(False)
         open = menu.addAction("Open this folder in File Explorer")
         menu.addSeparator()
         refresh = menu.addAction("Refresh")
         action = menu.exec_(self.uic.folderLocal.mapToGlobal(point))
-        
+        if action == upload:
+            self.uploadFile()
+            
         if action == open:
-            # self.uic.folderLocal.itemClicked.setText()
             try:
                 os.startfile(self.pathLocal)
             except:
@@ -207,13 +207,27 @@ class MainWindow():
                 self.printError(error)
         if action == refresh:
             self.loadDirPathLocal()
-            
-            # self.pro
+
+    def uploadFile(self):
+        item = self.uic.folderLocal.selectedIndexes()
+        # print(str(item[0].data()))
+        srcfile  = self.pathLocal + "/" + str(item[0].data())
+        dstfile  = self.pathServer + "/" + str(item[0].data())
+        dstfile  = dstfile.replace('//', '/')
+
+        try:
+            file = open(srcfile, 'rb')
+            self.ftp.set_pasv(0)
+            self.ftp.storbinary(cmd='STOR '+dstfile, fp=file)
+            self.ftp.set_pasv(1)
+            self.updateDirServer()
+            self.printStatus("Upload file to server successfully!")
+        except:
+            self.printError("Sorry! You can't upload to server!")
     # Hàm hiển thị menu các chức năng để tương tác với folder server
     def contextMenuServer(self, point):
-        item = self.uic.folderServer.currentItem()
         menu = QMenu(self.uic.folderServer)
-        self.download = menu.addAction("Download")
+        download = menu.addAction("Download")
         
         menu.addSeparator()
         mkdir = menu.addAction("Create directory")
@@ -227,7 +241,7 @@ class MainWindow():
         if action == refresh:
             self.updateDirServer()
             self.printStatus("Refresh successful")
-        if action == self.download:
+        if action == download:
             self.downloadFolder()
         if action == mkdir:
             self.makeFolderServer()
@@ -282,26 +296,26 @@ class MainWindow():
                 self.printError("Sorry, you don't have this permission!")
 
     def downloadFolder(self):
-        self.printError("Chauw thể sử dụng")
-        # dl = Thread(target=self._download)
-        # dl.start()
-
-    def _download(self):
-            item     = self.uic.folderServer.currentItem()
-            filesize = int(item.text(1))
-
-            try:
-                srcfile  = self.pathServer + "/"+ str(item.text(0).toUtf8())
-                srcfile  = srcfile.replace('//', '/')
-                dstfile  = self.pathLocal + "/"+ str(item.text(0).toUtf8())
-            
-            except AttributeError:
+        
+        item     = self.uic.folderServer.currentItem()
+        if item.text(2) == "Folder":
+                self.printError("Now, You can't download this folder.")
+        else:
                 srcfile  = self.pathServer + "/"+ str(item.text(0))
                 srcfile  = srcfile.replace('//', '/')
                 dstfile  = self.pathLocal + "/"+ str(item.text(0))
-
-    def enabledContextDownload(self):
-        self.download.setEnabled(True)  
+                dstfile = dstfile.replace('//', '/')
+                try:
+                    def callback(data):
+                        file.write(data)
+                    
+                    file = open(dstfile, 'wb')
+                    self.ftp.set_pasv(0)
+                    self.ftp.retrbinary(cmd='RETR '+srcfile, callback=callback)
+                    self.printStatus("Download successful!")
+                    self.ftp.set_pasv(1)
+                except:
+                    self.printError("You can't download this file.")
 
     def updateDirServer(self):
         self.uic.folderServer.clear()
@@ -317,7 +331,6 @@ class MainWindow():
         self.uic.folderServer.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.download.setEnabled(False)
 
-
     def enabledComponents(self):
         self.pathServer = self.ftp.pwd()
         self.uic.inputDirPathServer.setText(self.pathServer)
@@ -326,9 +339,10 @@ class MainWindow():
         # Khi đã kết nối thì cho phép click right
         self.uic.folderServer.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.uic.folderServer.customContextMenuRequested.connect(self.contextMenuServer)
+        self.uic.folderLocal.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.uic.folderLocal.customContextMenuRequested.connect(self.contextMenuLocal)
         
         self.downloadToRemoteFileList()
-        self.download.setEnabled(True)
     # Hàm load dir Path để hiển thị folder cho nười dùng
     def loadDirPathServer(self):
         dirPathServer = self.uic.inputDirPathServer.text()
@@ -351,9 +365,6 @@ class MainWindow():
             n /= 1024
             # return f"{n:.2f}{unit}{suffix}"
     
-    # Xóa folder, file
-    def deleteDataServer(self, dataName):
-        self.ftp.delete(dataName)
     # Tạo 1 file trên server
     
     def makeFileServer(self):
@@ -424,6 +435,7 @@ class MainWindow():
         self.uiSetting.inputPassConn.setText(dataMySQL[3])
         self.uiSetting.inputPortConn.setText(dataMySQL[4])
         self.uiSetting.btnSave.clicked.connect(self.saveSetting)
+        self.uiSetting.btnCancel.clicked.connect(self.windowSetting.close)
     # Gọi hàm để lưu thông tin trong phần cài đặt
     def saveSetting(self):
         updateMySQL = updateAccount(
